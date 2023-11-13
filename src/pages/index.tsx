@@ -1,16 +1,16 @@
 import Head from "next/head";
 import { Montserrat } from "next/font/google";
 import Bio from "@/components/bio";
-import Job from "@/components/job";
-import SocialLinks from "@/components/social-links";
+import Social from "@/components/social";
 import Skills from "@/components/skills";
+import Navigation from "@/components/navigation";
 
 export const montserrat = Montserrat({
   subsets: ["latin"],
   display: "swap",
 });
 
-const ageCalc = (birthday: string | Date | number ) => {
+const ageCalc = (birthday: string | Date | number) => {
   var today = new Date();
   var birthDate = new Date(birthday);
   var age_now = today.getFullYear() - birthDate.getFullYear();
@@ -24,7 +24,7 @@ const ageCalc = (birthday: string | Date | number ) => {
 const age = ageCalc(process.env.NEXT_PUBLIC_PERSON_BIRTHDAY ?? "");
 
 // SEO
-const pageTitle = process.env.NEXT_PUBLIC_PERSON_NAME;
+const pageTitle = process.env.NEXT_PUBLIC_PERSON_NAME ?? "An another Developer";
 const pageDescription =
   process.env.NEXT_PUBLIC_PERSON_PROFESSION +
   " based in " +
@@ -46,34 +46,18 @@ export default function Home() {
         <nav id="nav">
           <div id="navLeft">
             <div id="navLeftContainer">
-              <Job
-                jobTitle={process.env.NEXT_PUBLIC_PERSON_JOB_TITLE ?? "Human"}
-                companyName={process.env.NEXT_PUBLIC_PERSON_COMPANY ?? "World"}
-                companyLink={process.env.NEXT_PUBLIC_PERSON_COMPANY_WEBSITE ?? "#"}
-              />
+              <Navigation />
             </div>
           </div>
           <div id="navRight">
             <div id="navRightContainer">
-              <SocialLinks
-                devTo={process.env.NEXT_PUBLIC_SOCIAL_DEVTO ?? "#"}
-                medium={process.env.NEXT_PUBLIC_SOCIAL_MEDIUM ?? "#"}
-                github={process.env.NEXT_PUBLIC_SOCIAL_GITHUB ?? "#"}
-                linkedin={process.env.NEXT_PUBLIC_SOCIAL_LINKEDIN ?? "#"}
-                discord={process.env.NEXT_PUBLIC_SOCIAL_DISCORD ?? "#"}
-                spotify={process.env.NEXT_PUBLIC_SOCIAL_SPOTIFY ?? "#"}
-                instagram={process.env.NEXT_PUBLIC_SOCIAL_INSTAGRAM ?? "#"}
-                email={"mailto:" + process.env.NEXT_PUBLIC_PERSON_EMAIL ?? "#"}
-              />
+              <Social />
             </div>
           </div>
         </nav>
         <section id="home">
           <div className="container">
-            <Bio
-              name={process.env.NEXT_PUBLIC_PERSON_NAME ?? "John Doe"}
-              profession={process.env.NEXT_PUBLIC_PERSON_PROFESSION_VISUAL ?? "Human"}
-            />
+            <Bio />
             <Skills />
           </div>
         </section>
