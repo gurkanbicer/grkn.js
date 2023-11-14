@@ -293,3 +293,10 @@ main {
   height: 100%;
   max-height: auto;
 }
+
+#contact {
+  height: 100vh !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

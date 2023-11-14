@@ -15,6 +15,7 @@ export default function Navigation() {
     <>
       <NavigationItem href="/" name="Home" />
       <NavigationItem href="/blog" name="Blog" />
+      <NavigationItem href="/contact" name="Contact" />
     </>
   );
 }
