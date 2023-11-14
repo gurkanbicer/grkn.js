@@ -1,37 +1,34 @@
 import Head from "next/head";
 import { Montserrat } from "next/font/google";
-import Bio from "@/components/bio";
-import Social from "@/components/social";
-import Skills from "@/components/skills";
 import Navigation from "@/components/navigation";
+import Social from "@/components/social";
+import Bio from "@/components/bio";
+import Skills from "@/components/skills";
 
 export const montserrat = Montserrat({
   subsets: ["latin"],
   display: "swap",
 });
 
-const ageCalc = (birthday: string | Date | number) => {
-  var today = new Date();
-  var birthDate = new Date(birthday);
-  var age_now = today.getFullYear() - birthDate.getFullYear();
-  var m = today.getMonth() - birthDate.getMonth();
+function calcAge(birthday: string | Date | number) {
+  let today = new Date();
+  let birthDate = new Date(birthday);
+  let age_now = today.getFullYear() - birthDate.getFullYear();
+  let m = today.getMonth() - birthDate.getMonth();
   if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
     age_now--;
   }
   return age_now;
-};
+}
 
-const age = ageCalc(process.env.NEXT_PUBLIC_PERSON_BIRTHDAY ?? "");
+const age = calcAge(process.env.NEXT_PUBLIC_PERSON_BIRTHDAY ?? "");
 
-// SEO
-const pageTitle = process.env.NEXT_PUBLIC_PERSON_NAME ?? "An another Developer";
-const pageDescription =
-  process.env.NEXT_PUBLIC_PERSON_PROFESSION +
-  " based in " +
-  process.env.NEXT_PUBLIC_PERSON_LOCATION +
-  ". Level " +
-  age +
-  " - Hooman.";
+const personName = process.env.NEXT_PUBLIC_PERSON_NAME;
+const profession = process.env.NEXT_PUBLIC_PERSON_PROFESSION;
+const location = process.env.NEXT_PUBLIC_PERSON_LOCATION;
+
+const pageTitle = personName ?? "An another Developer";
+const pageDescription = profession + " based in " + location + ". Level " + age + " - Hooman.";
 
 export default function Home() {
   return (

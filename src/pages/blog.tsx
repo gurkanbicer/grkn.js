@@ -1,14 +1,10 @@
 import Head from "next/head";
-
 import { Montserrat, Source_Code_Pro } from "next/font/google";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendar, faClock, faTag } from "@fortawesome/free-solid-svg-icons";
 import { faDev } from "@fortawesome/free-brands-svg-icons";
-import Social from "@/components/social";
 import Navigation from "@/components/navigation";
-import Post from "@/components/post";
-
-import Link from "next/link";
+import Social from "@/components/social";
 
 export const montserrat = Montserrat({
   subsets: ["latin"],
@@ -20,20 +16,121 @@ export const source_code_pro = Source_Code_Pro({
   display: "swap",
 });
 
-const pageTitle = "Blog - " + process.env.NEXT_PUBLIC_PERSON_NAME;
-const pageDescription = "Latest dev blog posts of " + process.env.NEXT_PUBLIC_PERSON_NAME;
+const personName = process.env.NEXT_PUBLIC_PERSON_NAME;
+const pageTitle = "Blog - " + personName;
+const pageDescription = "Latest dev blog posts of " + personName;
 
-export const getServerSideProps = async (ctx) => {
-  const apiUrl = "https://dev.to/api/articles?username=" + process.env.DEVTO_API;
-  const response = await fetch(apiUrl);
-  const posts = await response.json();
+export const getServerSideProps = async () => {
+  const devToResponse = await fetch(
+    "https://dev.to/api/articles?username=" + process.env.DEVTO_API
+  );
+
+  const devPosts = await devToResponse.json();
 
   return {
-    props: { posts },
+    props: { devPosts },
   };
 };
 
-export default function Blog({ posts }) {
+function DevBlogPosts({ devPosts }: { devPosts: any }) {
+  return (
+    <div className="row">
+      {devPosts.length > 0 ? (
+        <>
+          {devPosts.map(
+            (
+              post: {
+                canonical_url: string;
+                title: string;
+                description: string;
+                readable_publish_date: string;
+                reading_time_minutes: string;
+                tag_list: string[];
+              },
+              index: string
+            ) => (
+              <div className="col-lg-4 col-md-6 col-sm-12" id={"post-" + index}>
+                <BlogPost
+                  url={post.canonical_url}
+                  title={post.title}
+                  description={post.description}
+                  publishDate={post.readable_publish_date}
+                  readingTimeMin={post.reading_time_minutes}
+                  tags={post.tag_list}
+                />
+              </div>
+            )
+          )}
+        </>
+      ) : (
+        <div className="col-lg-12 mt-3">
+          <p className="fst-italic">
+            There isn't any post right now that i can show you, sorry :|
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function BlogPost(props: {
+  url: string;
+  title: string;
+  description: string;
+  tags: string[];
+  publishDate: string;
+  readingTimeMin: string;
+}) {
+  return (
+    <>
+      <a className="card" href={props.url}>
+        <div className="card-title">
+          <h3>{props.title}</h3>
+          <span className="post-blog">
+            <FontAwesomeIcon icon={faDev} />
+          </span>
+        </div>
+        <div className="card-body d-flex flex-column">
+          <div className="mb-auto">{props.description}</div>
+          <div className="mt-3 post-tags">
+            <BlogPostTags tags={props.tags} />
+          </div>
+        </div>
+        <div className="card-footer">
+          <div className="d-flex">
+            <div className="flex-grow-1">
+              <FontAwesomeIcon icon={faCalendar} /> {props.publishDate}
+            </div>
+            <div className="flex-grow-1 text-end">
+              <FontAwesomeIcon icon={faClock} /> {props.readingTimeMin} min
+            </div>
+          </div>
+        </div>
+      </a>
+    </>
+  );
+}
+
+function BlogPostTags({ tags }: { tags: string[] }) {
+  if (tags.length > 0) {
+    return (
+      <>
+        <div className="mt-3 post-tags">
+          <FontAwesomeIcon icon={faTag} />{" "}
+          {tags.map(function (tag: string) {
+            return (
+              <>
+                <span>{tag}</span>{" "}
+              </>
+            );
+          })}
+        </div>
+      </>
+    );
+  }
+}
+
+export default function Blog({ devPosts }: { devPosts: any }) {
   return (
     <>
       <Head>
@@ -60,25 +157,11 @@ export default function Blog({ posts }) {
             <div className="row">
               <div className="col-lg-12 mt-5">
                 <h2 className={source_code_pro.className}>
-                  Recent <span className="text-danger">&lt;Dev /&gt;</span>{" "} Posts
+                  Recent <span className="text-danger">&lt;Dev /&gt;</span>{" "}
+                  Posts
                 </h2>
               </div>
-              {posts.map(function (post) {
-                return (
-                  <>
-                    <div className="col-lg-4 col-md-6 col-sm-12">
-                      <Post
-                        url={post.canonical_url}
-                        title={post.title}
-                        description={post.description}
-                        publishDate={post.readable_publish_date}
-                        readingTimeMin={post.reading_time_minutes}
-                        tags={post.tag_list}
-                      />
-                    </div>
-                  </>
-                );
-              })}
+              <DevBlogPosts devPosts={devPosts} />
             </div>
           </div>
         </div>
