@@ -5,6 +5,7 @@ import { faCalendar, faClock, faTag } from "@fortawesome/free-solid-svg-icons";
 import { faDev } from "@fortawesome/free-brands-svg-icons";
 import Navigation from "@/components/navigation";
 import Social from "@/components/social";
+import Bio from "@/components/bio";
 
 export const montserrat = Montserrat({
   subsets: ["latin"],
@@ -46,10 +47,10 @@ function DevBlogPosts({ devPosts }: { devPosts: any }) {
                 readable_publish_date: string;
                 reading_time_minutes: string;
                 tag_list: string[];
-              },
-              index: string
+              }
+              
             ) => (
-              <div className="col-lg-4 col-md-6 col-sm-12" id={"post-" + index}>
+              <div className="col-lg-4 col-md-6 col-sm-12">
                 <BlogPost
                   url={post.canonical_url}
                   title={post.title}
@@ -65,7 +66,7 @@ function DevBlogPosts({ devPosts }: { devPosts: any }) {
       ) : (
         <div className="col-lg-12 mt-3">
           <p className="fst-italic">
-            There isn't any post right now that i can show you, sorry :|
+            There isn&apos;t any post right now that i can show you, sorry :|
           </p>
         </div>
       )}
@@ -155,11 +156,17 @@ export default function Blog({ devPosts }: { devPosts: any }) {
         <div id="posts">
           <div className="container">
             <div className="row">
+              <div className="col-lg-12">
+              <Bio />
+              </div>
+            </div>
+            <div className="row">
               <div className="col-lg-12 mt-5">
                 <h2 className={source_code_pro.className}>
                   Recent <span className="text-danger">&lt;Dev /&gt;</span>{" "}
                   Posts
                 </h2>
+                <hr className="border border-danger border-2" />
               </div>
               <DevBlogPosts devPosts={devPosts} />
             </div>

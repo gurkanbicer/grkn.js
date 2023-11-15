@@ -12,7 +12,7 @@ export default function Skills() {
       <div id="skills">
         <div className="skill-row mt-5">
           <p className={source_code_pro.className}>
-            What's inside in this{" "}
+            What&apos;s inside in this{" "}
             <span className="text-danger">&lt;Head /&gt;</span>
           </p>
         </div>

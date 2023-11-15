@@ -1,9 +1,9 @@
 import Head from "next/head";
-import { Montserrat } from "next/font/google";
 import Navigation from "@/components/navigation";
 import Social from "@/components/social";
 import Bio from "@/components/bio";
 import Skills from "@/components/skills";
+import { Montserrat } from "next/font/google";
 
 export const montserrat = Montserrat({
   subsets: ["latin"],

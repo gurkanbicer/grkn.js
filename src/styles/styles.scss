@@ -1,12 +1,3 @@
-$theme-colors: ("primary": #093ea8,
-  "secondary": #3bd7ec,
-  "success": #22e11c,
-  "info": #d9ff50,
-  "warning": #ffbe0b,
-  "danger": #ff0000,
-  "light": #c0ccda,
-  "dark": #000103,
-);
 
 @import "/node_modules/bootstrap/scss/bootstrap.scss";
 
@@ -224,9 +215,10 @@ main {
   -moz-box-shadow: $box-shadow-sm;
   -webkit-box-shadow: $box-shadow-sm;
   transition: transform 0.3s ease-in-out;
-  margin: 15px 2px;
+  margin: 15px 0 15px 10px;
   cursor: pointer;
   text-decoration: none;
+
 }
 
 #posts .card:hover {
@@ -299,4 +291,9 @@ main {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+
+#contact h2 {
+  font-weight: 300;
 }
