@@ -3,9 +3,9 @@ import Link from "next/link";
 function NavigationItem({ href, name }: { href: string; name: string }) {
   return (
     <>
-      <div>
+      <li>
         <Link href={href}>{name}</Link>
-      </div>
+      </li>
     </>
   );
 }
@@ -13,9 +13,11 @@ function NavigationItem({ href, name }: { href: string; name: string }) {
 export default function Navigation() {
   return (
     <>
-      <NavigationItem href="/" name="Home" />
-      <NavigationItem href="/blog" name="Blog" />
-      <NavigationItem href="/contact" name="Contact" />
+      <ul id="navMenu">
+        <NavigationItem href="/" name="Home" />
+        <NavigationItem href="/blog" name="Blog" />
+        <NavigationItem href="/contact" name="Contact" />
+      </ul>
     </>
   );
 }

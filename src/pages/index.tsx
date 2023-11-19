@@ -28,7 +28,8 @@ const profession = process.env.NEXT_PUBLIC_PERSON_PROFESSION;
 const location = process.env.NEXT_PUBLIC_PERSON_LOCATION;
 
 const pageTitle = personName ?? "An another Developer";
-const pageDescription = profession + " based in " + location + ". Level " + age + " - Hooman.";
+const pageDescription =
+  profession + " based in " + location + ". Level " + age + " - Hooman.";
 
 export default function Home() {
   return (
@@ -41,13 +42,12 @@ export default function Home() {
       </Head>
       <main className={montserrat.className}>
         <nav id="nav">
-          <div id="navLeft">
-            <div id="navLeftContainer">
+          <div className="row">
+            <div className="col-lg-6 col-md-6 col-sm-12">
               <Navigation />
             </div>
-          </div>
-          <div id="navRight">
-            <div id="navRightContainer">
+
+            <div className="col-lg-6 col-md-6 col-sm-12">
               <Social />
             </div>
           </div>

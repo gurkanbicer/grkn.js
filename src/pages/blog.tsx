@@ -1,11 +1,16 @@
 import Head from "next/head";
 import { Montserrat, Source_Code_Pro } from "next/font/google";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendar, faClock, faTag } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCalendar,
+  faClock,
+  faRss,
+  faTag,
+} from "@fortawesome/free-solid-svg-icons";
 import { faDev } from "@fortawesome/free-brands-svg-icons";
 import Navigation from "@/components/navigation";
+import Logo from "@/components/logo";
 import Social from "@/components/social";
-import Bio from "@/components/bio";
 
 export const montserrat = Montserrat({
   subsets: ["latin"],
@@ -27,6 +32,7 @@ export const getServerSideProps = async () => {
   );
 
   const devPosts = await devToResponse.json();
+  //const devPosts = []
 
   return {
     props: { devPosts },
@@ -39,17 +45,14 @@ function DevBlogPosts({ devPosts }: { devPosts: any }) {
       {devPosts.length > 0 ? (
         <>
           {devPosts.map(
-            (
-              post: {
-                canonical_url: string;
-                title: string;
-                description: string;
-                readable_publish_date: string;
-                reading_time_minutes: string;
-                tag_list: string[];
-              }
-              
-            ) => (
+            (post: {
+              canonical_url: string;
+              title: string;
+              description: string;
+              readable_publish_date: string;
+              reading_time_minutes: string;
+              tag_list: string[];
+            }) => (
               <div className="col-lg-4 col-md-6 col-sm-12">
                 <BlogPost
                   url={post.canonical_url}
@@ -65,9 +68,17 @@ function DevBlogPosts({ devPosts }: { devPosts: any }) {
         </>
       ) : (
         <div className="col-lg-12 mt-3">
-          <p className="fst-italic">
-            There isn&apos;t any post right now that i can show you, sorry :|
-          </p>
+          <div className="d-flex align-items-center justify-content-center">
+            <div>
+              <p className="my-3 fs-2 text-center text-muted">
+                <FontAwesomeIcon icon={faRss} />
+              </p>
+              <p className="fst-italic text-center">
+                There isn&apos;t any post :| <br />
+                Come back later!
+              </p>
+            </div>
+          </div>
         </div>
       )}
     </div>
@@ -142,13 +153,14 @@ export default function Blog({ devPosts }: { devPosts: any }) {
       </Head>
       <main className={montserrat.className}>
         <nav id="nav">
-          <div id="navLeft">
-            <div id="navLeftContainer">
+          <div className="row">
+            <div className="col-lg-4 col-md-4 col-sm-12">
               <Navigation />
             </div>
-          </div>
-          <div id="navRight">
-            <div id="navRightContainer">
+            <div className="col-lg-4 col-md-4 col-sm-12">
+              <Logo />
+            </div>
+            <div className="col-lg-4 col-md-4 col-sm-12">
               <Social />
             </div>
           </div>
@@ -156,17 +168,11 @@ export default function Blog({ devPosts }: { devPosts: any }) {
         <div id="posts">
           <div className="container">
             <div className="row">
-              <div className="col-lg-12">
-              <Bio />
-              </div>
-            </div>
-            <div className="row">
               <div className="col-lg-12 mt-5">
-                <h2 className={source_code_pro.className}>
+                <h1 className={source_code_pro.className}>
                   Recent <span className="text-danger">&lt;Dev /&gt;</span>{" "}
                   Posts
-                </h2>
-                <hr className="border border-danger border-2" />
+                </h1>
               </div>
               <DevBlogPosts devPosts={devPosts} />
             </div>
