@@ -29,12 +29,25 @@ export default function Contact() {
   const [formVisible, setFormVisibility] = useState(true);
   const [alertStatus, setAlertStatus] = useState("");
   const [alertMessage, setAlertMessage] = useState("");
+  const [formErrors, setFormErrors] = useState({
+    name: true,
+    email: true,
+    subject: true,
+    message: true,
+  });
+
+  const [formErrorMessages, setFormErrorMessage] = useState({
+    name: "",
+    email: "",
+    subject: "",
+    message: "",
+  });
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
-    fetch("/api/send-email", {
+    fetch("/api/contact", {
       method: "POST",
       body: JSON.stringify({
         name: inputName,
@@ -65,15 +78,47 @@ export default function Contact() {
       });
   };
 
-  const handleReset = () => {
-    setInputName("");
-    setInputEmail("");
-    setInputSubject("");
-    setInputMessage("");
+  const handleTryAgain = () => {
+    //    setInputName("");
+    //    setInputEmail("");
+    //    setInputSubject("");
+    //    setInputMessage("");
     setAlertMessage("");
     setAlertStatus("");
     setFormVisibility(true);
     setSent(false);
+  };
+
+  const handleUserInput = (e) => {
+    const name = e.target.name;
+    const value = e.target.value;
+
+    switch (name) {
+      case "name":
+        if (value.length < 3 || value.length > 30) {
+          formErrors.name = false
+          formErrorMessages.name = "The name field length should be between 3-30 chars."
+        }
+        break;
+      case "email":
+        const emailValid = value.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i);
+        if (!emailValid) {
+          formErrors.email = false
+          formErrorMessages.email = "The email field should be equal email format."
+        }
+        break;
+      case "subject":
+        if (value.length < 3 || value.length > 100) {
+          formErrors.subject = false
+          formErrorMessages.subject = "The subject field length should be between 3-100 chars."
+        }
+      case "message":
+        if (value.length < 3 || value.length > 2500) {
+          formErrors.message = false
+          formErrorMessages.message = "The message field length should be between 10-2500 chars."
+        }
+        break;
+    }
   };
 
   return (
@@ -190,7 +235,13 @@ export default function Contact() {
                     ""
                   ) : (
                     <>
-                      <button className="btn btn-primary"></button>
+                      <button
+                        type="button"
+                        className="btn btn-primary"
+                        onClick={handleTryAgain}
+                      >
+                        Try again
+                      </button>
                     </>
                   )}
                 </div>
