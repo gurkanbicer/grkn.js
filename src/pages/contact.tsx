@@ -1,4 +1,4 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useState, useEffect } from "react";
 import Head from "next/head";
 import Navigation from "@/components/navigation";
 import Social from "@/components/social";
@@ -29,22 +29,93 @@ export default function Contact() {
   const [formVisible, setFormVisibility] = useState(true);
   const [alertStatus, setAlertStatus] = useState("");
   const [alertMessage, setAlertMessage] = useState("");
+  const [isFormHasErrors, setFormHasErrors] = useState(0);
   const [formErrors, setFormErrors] = useState({
-    name: true,
-    email: true,
-    subject: true,
-    message: true,
+    inputName: "",
+    inputEmail: "",
+    inputSubject: "",
+    inputMessage: "",
   });
+  const [inputMessageLength, setInputMessageLength] = useState(2500);
 
-  const [formErrorMessages, setFormErrorMessage] = useState({
-    name: "",
-    email: "",
-    subject: "",
-    message: "",
-  });
+  const handleValidation = () => {
+    let countErrors = 0;
+
+    let newFormErrors = {
+      inputName: "",
+      inputSubject: "",
+      inputEmail: "",
+      inputMessage: "",
+    };
+
+    if (inputName.length < 3 || inputName.length > 30) {
+      newFormErrors.inputName =
+        "The name field length should be between 3-30 chars.";
+      countErrors++;
+    }
+
+    const emailValid = inputEmail.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i);
+
+    if (!emailValid) {
+      newFormErrors.inputEmail = "The email field should be correct format.";
+      countErrors++;
+    }
+
+    if (inputSubject.length < 3 || inputSubject.length > 100) {
+      newFormErrors.inputSubject =
+        "The subject field length should be between 3-100 chars.";
+      countErrors++;
+    }
+
+    if (inputMessage.length < 20 || inputMessage.length > 2500) {
+      newFormErrors.inputMessage =
+        "The message field length should be between 20-2500 chars.";
+      countErrors++;
+    }
+
+    if (inputName === "") {
+      newFormErrors.inputName = "This field is required";
+      countErrors++;
+    }
+
+    if (inputSubject === "") {
+      newFormErrors.inputSubject = "This field is required";
+      countErrors++;
+    }
+
+    if (inputEmail === "") {
+      newFormErrors.inputEmail = "This field is required";
+      countErrors++;
+    }
+
+    if (inputMessage === "") {
+      newFormErrors.inputMessage = "This field is required";
+      countErrors++;
+    }
+
+    // for avoid blank form errors but still need to disable send button
+    if (inputName === "" && inputEmail === "" && inputMessage === "" && inputSubject === "") {
+      newFormErrors = {
+        inputName: "",
+        inputSubject: "",
+        inputEmail: "",
+        inputMessage: "",
+      };
+
+      countErrors++;
+    }
+
+    setFormErrors(newFormErrors);
+    setFormHasErrors(countErrors);
+  };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+
+    if (isFormHasErrors > 0) {
+      return
+    }
+
     setLoading(true);
 
     fetch("/api/contact", {
@@ -79,47 +150,21 @@ export default function Contact() {
   };
 
   const handleTryAgain = () => {
-    //    setInputName("");
-    //    setInputEmail("");
-    //    setInputSubject("");
-    //    setInputMessage("");
     setAlertMessage("");
     setAlertStatus("");
     setFormVisibility(true);
     setSent(false);
   };
 
-  const handleUserInput = (e) => {
-    const name = e.target.name;
-    const value = e.target.value;
+  useEffect(() => {
+    handleValidation();
+  }, [inputName, inputEmail, inputSubject, inputMessage]);
 
-    switch (name) {
-      case "name":
-        if (value.length < 3 || value.length > 30) {
-          formErrors.name = false
-          formErrorMessages.name = "The name field length should be between 3-30 chars."
-        }
-        break;
-      case "email":
-        const emailValid = value.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i);
-        if (!emailValid) {
-          formErrors.email = false
-          formErrorMessages.email = "The email field should be equal email format."
-        }
-        break;
-      case "subject":
-        if (value.length < 3 || value.length > 100) {
-          formErrors.subject = false
-          formErrorMessages.subject = "The subject field length should be between 3-100 chars."
-        }
-      case "message":
-        if (value.length < 3 || value.length > 2500) {
-          formErrors.message = false
-          formErrorMessages.message = "The message field length should be between 10-2500 chars."
-        }
-        break;
-    }
-  };
+  useEffect(() => {
+    let maxChars = 2500;
+    let calcRemainChars = maxChars - Number(inputMessage.length);
+    setInputMessageLength(calcRemainChars);
+  }, [inputMessage]);
 
   return (
     <>
@@ -170,43 +215,98 @@ export default function Contact() {
                       <label className="fw-light mb-2">Name</label>
                       <input
                         type="text"
-                        className="form-control"
+                        className={
+                          formErrors.inputName.length > 1
+                            ? "form-control is-invalid"
+                            : "form-control"
+                        }
                         value={inputName}
                         required
                         onChange={(e) => setInputName(e.target.value)}
                       />
+                      {formErrors.inputName.length > 1 ? (
+                        <>
+                          <span className="text-danger">
+                            {formErrors.inputName}
+                          </span>
+                        </>
+                      ) : (
+                        ""
+                      )}
                     </div>
                     <div className="col-lg-4 col-md-4 col-sm-12">
                       <label className="fw-light mb-2">Email</label>
                       <input
                         type="email"
-                        className="form-control"
+                        className={
+                          formErrors.inputEmail.length > 1
+                            ? "form-control is-invalid"
+                            : "form-control"
+                        }
                         value={inputEmail}
                         required
                         onChange={(e) => setInputEmail(e.target.value)}
                       />
+                      {formErrors.inputEmail.length > 1 ? (
+                        <>
+                          <span className="text-danger">
+                            {formErrors.inputEmail}
+                          </span>
+                        </>
+                      ) : (
+                        ""
+                      )}
                     </div>
                     <div className="col-lg-4 col-md-4 col-sm-12">
                       <label className="fw-light mb-2">Subject</label>
                       <input
                         type="text"
-                        className="form-control"
+                        className={
+                          formErrors.inputSubject.length > 1
+                            ? "form-control is-invalid"
+                            : "form-control"
+                        }
                         value={inputSubject}
                         required
                         onChange={(e) => setInputSubject(e.target.value)}
                       />
+                      {formErrors.inputSubject.length > 1 ? (
+                        <>
+                          <span className="text-danger">
+                            {formErrors.inputSubject}
+                          </span>
+                        </>
+                      ) : (
+                        ""
+                      )}
                     </div>
                   </div>
                   <div className="row mt-3">
                     <div className="col-lg-12 col-md-12 col-sm-12">
                       <label className="fw-light mb-2">Message</label>
                       <textarea
-                        className="form-control"
+                        className={
+                          formErrors.inputMessage.length > 1
+                            ? "form-control is-invalid"
+                            : "form-control"
+                        }
                         rows={5}
                         required
                         onChange={(e) => setInputMessage(e.target.value)}
                         value={inputMessage}
                       />
+                      {formErrors.inputMessage.length > 1 ? (
+                        <>
+                          <span className="text-danger">
+                            {formErrors.inputMessage}
+                          </span>
+                        </>
+                      ) : (
+                        ""
+                      )}
+                      <span className="d-block text-muted">
+                        {inputMessageLength} characters remain.
+                      </span>
                     </div>
                   </div>
                   <div className="row mt-3">
@@ -215,7 +315,7 @@ export default function Contact() {
                         type="submit"
                         className="btn btn-primary"
                         onClick={(e) => handleSubmit(e)}
-                        disabled={isLoading}
+                        disabled={isLoading || isFormHasErrors ? true : false}
                       >
                         {isLoading ? "Sending..." : "Send"}
                       </button>
