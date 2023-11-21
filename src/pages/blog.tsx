@@ -11,6 +11,7 @@ import { faDev } from "@fortawesome/free-brands-svg-icons";
 import Navigation from "@/components/navigation";
 import Logo from "@/components/logo";
 import Social from "@/components/social";
+import { v4 as uuidv4 } from 'uuid';
 
 export const montserrat = Montserrat({
   subsets: ["latin"],
@@ -32,8 +33,6 @@ export const getServerSideProps = async () => {
   );
 
   const devPosts = await devToResponse.json();
-  //const devPosts = []
-
   return {
     props: { devPosts },
   };
@@ -53,7 +52,7 @@ function DevBlogPosts({ devPosts }: { devPosts: any }) {
               reading_time_minutes: string;
               tag_list: string[];
             }) => (
-              <div className="col-lg-4 col-md-6 col-sm-12">
+              <div className="col-lg-4 col-md-6 col-sm-12" key={uuidv4()}>
                 <BlogPost
                   url={post.canonical_url}
                   title={post.title}
@@ -95,7 +94,7 @@ function BlogPost(props: {
 }) {
   return (
     <>
-      <a className="card" href={props.url}>
+      <a className="card" href={props.url} key={uuidv4()}>
         <div className="card-title">
           <h3>{props.title}</h3>
           <span className="post-blog">
@@ -129,10 +128,10 @@ function BlogPostTags({ tags }: { tags: string[] }) {
       <>
         <div className="mt-3 post-tags">
           <FontAwesomeIcon icon={faTag} />{" "}
-          {tags.map(function (tag: string) {
+          {tags.map(function (tag: string, index) {
             return (
               <>
-                <span>{tag}</span>{" "}
+                <span key={uuidv4()}>{tag}</span>{" "}
               </>
             );
           })}

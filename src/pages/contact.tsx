@@ -16,7 +16,7 @@ export const source_code_pro = Source_Code_Pro({
 });
 
 const personName = process.env.NEXT_PUBLIC_PERSON_NAME;
-const pageTitle = personName ?? "An another Developer";
+const pageTitle = "Contact - " + (personName ?? "An another Developer");
 const pageDescription = "Contact with " + personName;
 
 export default function Contact() {
@@ -38,7 +38,54 @@ export default function Contact() {
   });
   const [inputMessageLength, setInputMessageLength] = useState(2500);
 
-  const handleValidation = () => {
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+
+    if (isFormHasErrors > 0) {
+      return;
+    }
+
+    setLoading(true);
+
+    fetch("/api/contact", {
+      method: "POST",
+      body: JSON.stringify({
+        name: inputName,
+        email: inputEmail,
+        subject: inputSubject,
+        message: inputMessage,
+      }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((response) => {
+        if (response.status) {
+          setAlertStatus("alert-success");
+          setAlertMessage(response.message);
+          setFormVisibility(false);
+          setSent(true);
+        } else {
+          setAlertStatus("alert-warning");
+          setAlertMessage(response.message);
+          setFormVisibility(false);
+          setSent(false);
+        }
+
+        setLoading(false);
+      });
+  };
+
+  const handleTryAgain = () => {
+    setAlertMessage("");
+    setAlertStatus("");
+    setFormVisibility(true);
+    setSent(false);
+  };
+
+  useEffect(() => {
     let countErrors = 0;
 
     let newFormErrors = {
@@ -94,7 +141,12 @@ export default function Contact() {
     }
 
     // for avoid blank form errors but still need to disable send button
-    if (inputName === "" && inputEmail === "" && inputMessage === "" && inputSubject === "") {
+    if (
+      inputName === "" &&
+      inputEmail === "" &&
+      inputMessage === "" &&
+      inputSubject === ""
+    ) {
       newFormErrors = {
         inputName: "",
         inputSubject: "",
@@ -107,57 +159,7 @@ export default function Contact() {
 
     setFormErrors(newFormErrors);
     setFormHasErrors(countErrors);
-  };
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-
-    if (isFormHasErrors > 0) {
-      return
-    }
-
-    setLoading(true);
-
-    fetch("/api/contact", {
-      method: "POST",
-      body: JSON.stringify({
-        name: inputName,
-        email: inputEmail,
-        subject: inputSubject,
-        message: inputMessage,
-      }),
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    })
-      .then((response) => response.json())
-      .then((response) => {
-        if (response.status) {
-          setAlertStatus("alert-success");
-          setAlertMessage(response.message);
-          setFormVisibility(false);
-          setSent(true);
-        } else {
-          setAlertStatus("alert-warning");
-          setAlertMessage(response.message);
-          setFormVisibility(false);
-          setSent(false);
-        }
-
-        setLoading(false);
-      });
-  };
-
-  const handleTryAgain = () => {
-    setAlertMessage("");
-    setAlertStatus("");
-    setFormVisibility(true);
-    setSent(false);
-  };
-
-  useEffect(() => {
-    handleValidation();
   }, [inputName, inputEmail, inputSubject, inputMessage]);
 
   useEffect(() => {
@@ -330,20 +332,21 @@ export default function Contact() {
                 <div className="col-lg-12 col-md-12 col-sm-12">
                   <div className={"alert text-center " + alertStatus}>
                     {alertMessage}
+
+                    {isSent ? (
+                      ""
+                    ) : (
+                      <>
+                        <button
+                          type="button"
+                          className="btn btn-warning ms-3"
+                          onClick={handleTryAgain}
+                        >
+                          Try again
+                        </button>
+                      </>
+                    )}
                   </div>
-                  {isSent ? (
-                    ""
-                  ) : (
-                    <>
-                      <button
-                        type="button"
-                        className="btn btn-primary"
-                        onClick={handleTryAgain}
-                      >
-                        Try again
-                      </button>
-                    </>
-                  )}
                 </div>
               </div>
             </form>

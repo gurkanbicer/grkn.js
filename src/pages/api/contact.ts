@@ -7,21 +7,28 @@ export type ContactForm = {
   message: string;
 };
 
+function getClientIp(req : NextApiRequest)
+{
+  let ip;
+
+  if (
+    req.headers["x-forwarded-for"] &&
+    typeof req.headers["x-forwarded-for"] === "string"
+  ) {
+    ip = req.headers["x-forwarded-for"].split(",")[0];
+  } else if (req.headers["x-real-ip"]) {
+    ip = req.headers["x-real-ip"];
+  } else {
+    ip = req.connection.remoteAddress;
+  }
+}
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<ContactForm>
 ) {
-  let ip;
-
-  if (req.headers["x-forwarded-for"]) {
-    ip = req.headers["x-forwarded-for"].split(",")[0];
-  } else if (req.headers["x-real-ip"]) {
-    ip = req.connection.remoteAddress;
-  } else {
-    ip = req.connection.remoteAddress;
-  }
-
   const data = req.body;
+  const ip = getClientIp(req);
 
   let nodemailer = require("nodemailer");
 
@@ -53,7 +60,7 @@ export default async function handler(
     html: mailBody,
   };
 
-  await transporter.sendMail(mailData, function (err, info) {
+  await transporter.sendMail(mailData, function (err : string, info: any) {
     if (err) {
       console.log(err);
 
