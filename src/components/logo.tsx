@@ -15,6 +15,7 @@ export default function Logo() {
             height={96}
             alt={alt}
             className="img-thumbnail rounded-circle shadow-lg"
+            priority
           />
         </Link>
       </div>

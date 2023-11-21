@@ -22,6 +22,7 @@ function BioImageItem({
           height={150}
           className="img-thumbnail rounded-circle shadow-lg"
           alt={name}
+          priority
         />
       </>
     );
