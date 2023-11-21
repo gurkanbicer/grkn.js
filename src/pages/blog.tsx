@@ -149,6 +149,7 @@ export default function Blog({ devPosts }: { devPosts: any }) {
         <meta name="description" content={pageDescription} />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
+        <link rel="preload" href={process.env.NEXT_PUBLIC_PERSON_PROFILE_IMAGE} as="image" />
       </Head>
       <main className={montserrat.className}>
         <nav id="nav">
